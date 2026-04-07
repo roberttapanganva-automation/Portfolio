@@ -38,6 +38,6 @@ Other tools used across projects:
 
 ## Contact
 - Gmail: roberttapangan.va@gmail.com
-- LinkedIn: [Robert Tapangan](https://www.linkedin.com/in/robert-tapangan)
+- LinkedIn: [Robert Tapangan](https://www.linkedin.com/in/robert-tapangan-automation-specialist/)
 - Upwork: [Upwork Profile](https://www.upwork.com/freelancers/~017429a849b97624af?mp_source=share)
 - OnlineJobs: [OnlineJobs Profile](https://www.onlinejobs.ph/jobseekers/info/4877103)
