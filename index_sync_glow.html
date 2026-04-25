@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RT Automate - AI Automation Systems</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "forged-iron": "#16181A",
+            "deep-blueprint": "#264653",
+            "machine-off-white": "#F4F4F0",
+            "action-coral": "#FF5722",
+            "drafting-blue": "#8AB4F8",
+            "muted-text": "rgba(244, 244, 240, 0.68)",
+            "border-subtle": "rgba(244, 244, 240, 0.12)",
+            "soft-surface": "rgba(38, 70, 83, 0.55)",
+            "dark-panel": "#101214"
+          },
+          fontFamily: {
+            display: ["Space Grotesk", "sans-serif"],
+            body: ["Inter", "sans-serif"],
+            mono: ["Space Grotesk", "sans-serif"]
+          },
+          maxWidth: {
+            "container-max": "1280px"
+          },
+          spacing: {
+            "margin-page": "32px",
+            "stack-xl": "80px"
+          },
+          borderRadius: {
+            "DEFAULT": "0.125rem",
+            "sm": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "9999px"
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+    }
+
+    body {
+      background-color: #f5f3ef;
+      color: #16181a;
+      font-family: Inter, sans-serif;
+      overflow-x: hidden;
+    }
+
+    .dark body {
+      background-color: #16181a;
+      color: #f4f4f0;
+    }
+
+    @keyframes rotate-clockwise {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes rotate-counter {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); }
+    }
+
+    .orbit-container {
+      animation: rotate-clockwise 120s linear infinite;
+      transform-origin: center;
+    }
+
+    .orbit-container.reverse {
+      animation-name: rotate-counter;
+      animation-duration: 150s;
+    }
+
+    .keep-upright {
+      animation: rotate-counter 120s linear infinite;
+      transform-origin: center;
+    }
+
+    .orbit-container.reverse .keep-upright {
+      animation-name: rotate-clockwise;
+      animation-duration: 150s;
+    }
+
+    .orbit-ring {
+      border: 1px solid rgba(37, 99, 235, 0.15);
+      border-radius: 9999px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .dark .orbit-ring {
+      border-color: rgba(138, 180, 248, 0.18);
+    }
+
+    .tool-node {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 52px;
+      height: 52px;
+      margin: -26px 0 0 -26px;
+      transform: rotate(var(--angle)) translateX(var(--radius)) rotate(calc(-1 * var(--angle)));
+      display: grid;
+      place-items: center;
+    }
+
+    .tool-logo-card {
+      width: 52px;
+      height: 52px;
+      padding: 10px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      border: 1px solid rgba(22, 24, 26, 0.16);
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 14px 26px rgba(22, 24, 26, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.78);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .dark .tool-logo-card {
+      border-color: rgba(244, 244, 240, 0.18);
+      background: rgba(244, 244, 240, 0.94);
+      box-shadow: 0 14px 26px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.50);
+    }
+
+    .tool-logo-card:hover {
+      transform: scale(1.08);
+      border-color: rgba(255, 87, 34, 0.7);
+      box-shadow: 0 0 22px rgba(255, 87, 34, 0.18);
+    }
+
+    .tool-logo-card img,
+    .social-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .stack-logo {
+      min-height: 38px;
+      overflow: hidden;
+    }
+
+    .stack-logo img,
+    #proof-tools img {
+      width: 20px !important;
+      height: 20px !important;
+      max-width: 20px !important;
+      max-height: 20px !important;
+      flex: 0 0 20px;
+      object-fit: contain;
+    }
+
+    .automation-core {
+      width: 128px;
+      height: 128px;
+      border: 2px solid #ff5722;
+      border-radius: 9999px;
+      background: #16181a;
+      color: #ff5722;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 10;
+      box-shadow: 0 0 20px rgba(255, 87, 34, 0.30), inset 0 0 18px rgba(255, 87, 34, 0.04);
+    }
+
+    .dark .automation-core {
+      background: #16181a;
+      box-shadow: 0 0 22px rgba(255, 87, 34, 0.34), inset 0 0 18px rgba(255, 87, 34, 0.04);
+    }
+
+    .automation-core-icon {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 2rem;
+      line-height: 1;
+      color: #ff5722;
+    }
+
+    .automation-core-label {
+      display: block;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      line-height: 1.35;
+      text-transform: uppercase;
+      color: #ff5722;
+    }
+
+    .proof-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      background: #101214;
+    }
+
+    .thumbnail.is-active {
+      border-color: #ff5722;
+      box-shadow: 0 0 0 2px rgba(255, 87, 34, 0.18);
+    }
+
+    .proof-open {
+      cursor: zoom-in;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(0, 0, 0, 0.84);
+      backdrop-filter: blur(10px);
+    }
+
+    .lightbox.is-open {
+      display: flex;
+    }
+
+    .lightbox-panel {
+      position: relative;
+      width: min(1320px, calc(100vw - 32px));
+      max-height: calc(100vh - 32px);
+      border: 1px solid rgba(244, 244, 240, 0.16);
+      background: #101214;
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.46);
+      overflow: hidden;
+    }
+
+    .lightbox-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      min-height: min(760px, calc(100vh - 32px));
+      max-height: calc(100vh - 32px);
+    }
+
+    .lightbox-media {
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      background: #0d0f11;
+    }
+
+    .lightbox-image-frame {
+      display: grid;
+      min-height: 0;
+      height: min(76vh, 760px);
+      place-items: center;
+      padding: 16px;
+      background: #0d0f11;
+    }
+
+    .lightbox img#lightboxImage {
+      display: block;
+      width: 100%;
+      height: 100%;
+      max-height: min(76vh, 760px);
+      object-fit: contain;
+      object-position: center;
+      background: #0d0f11;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 4;
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(244, 244, 240, 0.18);
+      border-radius: 999px;
+      background: rgba(16, 18, 20, 0.86);
+      color: #f4f4f0;
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+
+    .lightbox-caption {
+      padding: 12px 16px;
+      border-top: 1px solid rgba(244, 244, 240, 0.10);
+      color: rgba(244, 244, 240, 0.78);
+      font-size: 0.9rem;
+    }
+
+    .lightbox-gallery {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 0 16px 16px;
+      background: #101214;
+    }
+
+    .lightbox-gallery button {
+      width: 98px;
+      height: 64px;
+      flex: 0 0 auto;
+      overflow: hidden;
+      border: 1px solid rgba(244, 244, 240, 0.16);
+      background: #0d0f11;
+      opacity: 0.72;
+      transition: opacity 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .lightbox-gallery button:hover {
+      transform: translateY(-1px);
+      opacity: 1;
+    }
+
+    .lightbox-gallery button.is-active {
+      border-color: #ff5722;
+      opacity: 1;
+      box-shadow: 0 0 0 1px rgba(255, 87, 34, 0.25);
+    }
+
+    .lightbox-gallery img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      background: #0d0f11;
+    }
+
+    .lightbox-info {
+      border-left: 1px solid rgba(244, 244, 240, 0.12);
+      background: #101214;
+      padding: 28px 24px;
+      overflow-y: auto;
+    }
+
+    .lightbox-info-label {
+      display: block;
+      margin-bottom: 10px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #ff5722;
+    }
+
+    .lightbox-info-title {
+      margin-bottom: 20px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.55rem;
+      font-weight: 800;
+      line-height: 1.15;
+      color: #f4f4f0;
+    }
+
+    .lightbox-info-block {
+      padding-top: 16px;
+      margin-top: 16px;
+      border-top: 1px solid rgba(244, 244, 240, 0.10);
+    }
+
+    .lightbox-info-heading {
+      display: block;
+      margin-bottom: 8px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #8ab4f8;
+    }
+
+    .lightbox-info-text {
+      font-size: 0.92rem;
+      line-height: 1.72;
+      color: rgba(244, 244, 240, 0.78);
+    }
+
+    @media (max-width: 920px) {
+      .lightbox {
+        padding: 12px;
+      }
+
+      .lightbox-layout {
+        grid-template-columns: 1fr;
+        max-height: calc(100vh - 24px);
+        overflow-y: auto;
+      }
+
+      .lightbox-image-frame {
+        height: min(56vh, 520px);
+        padding: 12px;
+      }
+
+      .lightbox img#lightboxImage {
+        max-height: min(56vh, 520px);
+      }
+
+      .lightbox-info {
+        border-left: 0;
+        border-top: 1px solid rgba(244, 244, 240, 0.12);
+        padding: 22px 18px;
+      }
+    }
+
+    /* -------------------------------------------
+       Synchronized glow timeline for How I Work
+    ------------------------------------------- */
+    @keyframes sync-glow {
+      0%, 20% {
+        border-color: rgba(255, 87, 34, 1);
+        box-shadow: 0 0 0 1px rgba(255, 87, 34, 0.20), 0 0 20px rgba(255, 87, 34, 0.40);
+        color: #ff5722;
+      }
+      21%, 100% {
+        border-color: rgba(22, 24, 26, 0.12);
+        box-shadow: 0 0 0 rgba(255, 87, 34, 0);
+        color: #2563eb;
+      }
+    }
+
+    @keyframes sync-glow-dark {
+      0%, 20% {
+        border-color: rgba(255, 87, 34, 1);
+        box-shadow: 0 0 0 1px rgba(255, 87, 34, 0.20), 0 0 20px rgba(255, 87, 34, 0.40);
+        color: #ff5722;
+      }
+      21%, 100% {
+        border-color: rgba(244, 244, 240, 0.12);
+        box-shadow: 0 0 0 rgba(255, 87, 34, 0);
+        color: #8ab4f8;
+      }
+    }
+
+    @keyframes live-search {
+      0% { transform: translate(0, 0) scale(1); }
+      5% { transform: translate(-4px, -4px) scale(1.15); }
+      10% { transform: translate(4px, 4px) scale(1.15); }
+      15% { transform: translate(4px, -4px) scale(1.15); }
+      20%, 100% { transform: translate(0, 0) scale(1); }
+    }
+
+    @keyframes live-map {
+      0% { transform: scale(1) rotateY(0deg); }
+      10% { transform: scale(1.1) perspective(200px) rotateY(25deg) rotateX(10deg); }
+      20%, 100% { transform: scale(1) rotateY(0deg); }
+    }
+
+    @keyframes live-gear {
+      0% { transform: rotate(0deg); }
+      20% { transform: rotate(360deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes live-bug {
+      0% { transform: translateX(0); opacity: 1; }
+      8% { transform: translateX(25px); opacity: 0; }
+      9% { transform: translateX(-25px); opacity: 0; }
+      12% { transform: translateX(-25px); opacity: 1; }
+      20%, 100% { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes live-rocket {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      8% { transform: translate(30px, -30px) scale(0.5); opacity: 0; }
+      9% { transform: translate(-30px, 30px) scale(0.5); opacity: 0; }
+      12% { transform: translate(-30px, 30px) scale(0.5); opacity: 1; }
+      20%, 100% { transform: translate(0, 0) scale(1); opacity: 1; }
+    }
+
+    .process-flow {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 28px;
+      padding-top: 18px;
+    }
+
+    .process-flow::before {
+      content: "";
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      top: 48px;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(37, 99, 235, 0.18), rgba(255, 87, 34, 0.42), rgba(37, 99, 235, 0.18));
+      transition: background 0.3s ease;
+    }
+
+    .dark .process-flow::before {
+      background: linear-gradient(90deg, rgba(138, 180, 248, 0.14), rgba(255, 87, 34, 0.40), rgba(138, 180, 248, 0.14));
+    }
+
+    .process-step {
+      position: relative;
+      text-align: center;
+      padding-top: 0;
+    }
+
+    .process-icon {
+      position: relative;
+      z-index: 2;
+      width: 60px;
+      height: 60px;
+      display: grid;
+      place-items: center;
+      border-radius: 9999px;
+      border: 1px solid rgba(22, 24, 26, 0.12);
+      background: #f5f3ef;
+      color: #2563eb;
+      margin: 0 auto 22px;
+      transition: all 0.3s ease;
+      will-change: box-shadow, border-color, color;
+    }
+
+    .dark .process-icon {
+      background: #16181a;
+      color: #8ab4f8;
+    }
+
+    .step-container,
+    .step-icon {
+      animation-duration: 10s;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+    }
+
+    .step-container {
+      animation-name: sync-glow;
+    }
+
+    .dark .step-container {
+      animation-name: sync-glow-dark;
+    }
+
+    .process-icon .material-symbols-outlined {
+      display: block;
+      will-change: transform, opacity;
+    }
+
+    .delay-1 { animation-delay: 0s; }
+    .delay-2 { animation-delay: 2s; }
+    .delay-3 { animation-delay: 4s; }
+    .delay-4 { animation-delay: 6s; }
+    .delay-5 { animation-delay: 8s; }
+
+    .anim-search { animation-name: live-search; }
+    .anim-map { animation-name: live-map; }
+    .anim-gear { animation-name: live-gear; }
+    .anim-bug { animation-name: live-bug; }
+    .anim-rocket { animation-name: live-rocket; }
+
+    .process-step-number {
+      position: absolute;
+      z-index: 3;
+      top: -6px;
+      left: calc(50% + 16px);
+      display: grid;
+      width: 22px;
+      height: 22px;
+      place-items: center;
+      border-radius: 999px;
+      background: #ff5722;
+      color: white;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.68rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .process-step h3 {
+      margin-bottom: 10px;
+    }
+
+    .process-step p {
+      max-width: 220px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .tool-logo-card img {
+      width: 32px !important;
+      height: 32px !important;
+      max-width: 32px !important;
+      max-height: 32px !important;
+      object-fit: contain;
+      display: block;
+    }
+
+    .stack-logo img,
+    #proof-tools img {
+      width: 20px !important;
+      height: 20px !important;
+      max-width: 20px !important;
+      max-height: 20px !important;
+      object-fit: contain !important;
+      display: block;
+    }
+
+    .social-logo img {
+      width: 22px !important;
+      height: 22px !important;
+      max-width: 22px !important;
+      max-height: 22px !important;
+      object-fit: contain !important;
+      display: block;
+    }
+
+    @media (max-width: 900px) {
+      .topbar-inner {
+        padding-left: 16px;
+        padding-right: 16px;
+        gap: 10px;
+      }
+
+      .brand-lockup {
+        padding-right: 12px;
+        font-size: 1rem;
+      }
+
+      .nav-book-label {
+        display: none;
+      }
+
+      .hero-badge {
+        width: min(300px, calc(100vw - 32px)) !important;
+        max-width: min(300px, calc(100vw - 32px)) !important;
+        flex-wrap: wrap;
+        white-space: normal;
+        text-align: center;
+        line-height: 1.35;
+      }
+
+      .hero-badge span:last-child {
+        min-width: 0;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+
+      .hero-title-text {
+        width: min(340px, calc(100vw - 32px)) !important;
+        max-width: min(340px, calc(100vw - 32px)) !important;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 2.35rem !important;
+        line-height: 1.1 !important;
+      }
+
+      .hero-copy {
+        width: min(320px, calc(100vw - 48px)) !important;
+        max-width: min(320px, calc(100vw - 48px)) !important;
+        font-size: 1rem !important;
+      }
+
+      #process h2,
+      #proof h2,
+      #stack h2,
+      #book h2 {
+        width: min(300px, calc(100vw - 64px));
+        max-width: min(300px, calc(100vw - 64px));
+        font-size: 2.1rem !important;
+        line-height: 1.08 !important;
+      }
+
+      .process-flow {
+        grid-template-columns: 1fr;
+        gap: 34px;
+      }
+
+      .process-flow::before {
+        left: 30px;
+        right: auto;
+        top: 28px;
+        bottom: 28px;
+        width: 1px;
+        height: auto;
+        background: linear-gradient(180deg, rgba(255, 87, 34, 0.4), rgba(138, 180, 248, 0.35));
+      }
+
+      .process-step {
+        min-height: 82px;
+        padding-left: 92px;
+        text-align: left;
+      }
+
+      .process-icon {
+        position: absolute;
+        left: 0;
+        top: 0;
+        margin: 0;
+      }
+
+      .process-step-number {
+        left: 44px;
+        top: -6px;
+      }
+
+      .process-step p {
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      .orbit-field {
+        width: 100%;
+        height: auto;
+        display: grid;
+        gap: 16px;
+      }
+
+      .orbit-container,
+      .orbit-container.reverse,
+      .keep-upright {
+        animation: none;
+      }
+
+      .orbit-ring {
+        display: none;
+      }
+
+      .orbit-layer {
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .tool-node {
+        position: static;
+        width: 100%;
+        height: 62px;
+        margin: 0;
+        transform: none;
+      }
+
+      .tool-logo-card {
+        width: 100%;
+        height: 62px;
+      }
+
+      .automation-core {
+        position: static;
+        width: 100%;
+        height: 150px;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen antialiased transition-colors duration-300">
+  <nav class="sticky top-0 z-50 w-full border-b border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] transition-colors duration-300 dark:border-border-subtle dark:bg-[#16181A]">
+    <div class="topbar-inner mx-auto flex h-16 w-full max-w-container-max items-center justify-between gap-4 px-8">
+      <a href="#top" class="brand-lockup border-r border-[rgba(22,24,26,0.12)] pr-6 font-display text-xl font-black tracking-tighter text-[#16181A] transition-colors duration-300 dark:border-border-subtle dark:text-white">
+        RT_AUTOMATE
+      </a>
+      <div class="hidden items-center space-x-8 font-display text-sm font-bold uppercase tracking-tight md:flex">
+        <a class="text-[#5F676D] transition-colors hover:text-[#16181A] dark:text-zinc-500 dark:hover:text-zinc-200" href="#process">Process</a>
+        <a class="text-[#5F676D] transition-colors hover:text-[#16181A] dark:text-zinc-500 dark:hover:text-zinc-200" href="#proof">Proof</a>
+        <a class="text-[#5F676D] transition-colors hover:text-[#16181A] dark:text-zinc-500 dark:hover:text-zinc-200" href="#stack">Stack</a>
+        <a class="text-[#5F676D] transition-colors hover:text-[#16181A] dark:text-zinc-500 dark:hover:text-zinc-200" href="./about.html">About</a>
+        <a class="text-[#5F676D] transition-colors hover:text-[#16181A] dark:text-zinc-500 dark:hover:text-zinc-200" href="#book">Book</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="rounded-full p-2 text-[#5F676D] transition-colors hover:bg-[rgba(22,24,26,0.05)] hover:text-[#16181A] dark:text-zinc-500 dark:hover:bg-white/5 dark:hover:text-zinc-200" id="theme-toggle" type="button" aria-label="Toggle dark and light mode">
+          <span class="material-symbols-outlined hidden text-xl dark:block">light_mode</span>
+          <span class="material-symbols-outlined block text-xl dark:hidden">dark_mode</span>
+        </button>
+        <a class="flex items-center gap-2 rounded-sm bg-action-coral px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-white transition-all hover:brightness-110 active:scale-95" href="#book">
+          <span class="material-symbols-outlined text-sm">terminal</span>
+          <span class="nav-book-label">Book</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top" class="flex-grow">
+    <section class="relative flex min-h-[80vh] w-full flex-col items-center justify-center overflow-hidden border-b border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] py-32 transition-colors duration-300 dark:border-border-subtle dark:bg-forged-iron">
+      <div class="pointer-events-none absolute inset-0 z-0">
+        <div class="absolute left-1/2 top-1/2 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2563EB]/5 blur-[120px] transition-colors duration-300 dark:bg-drafting-blue/5"></div>
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDM5LjVoNDBNMzkuNSAwdjQwIiBzdHJva2U9InJnYmEoMjIsMjQsMjYsMC4wNSkiIHN0cm9rZS13aWR0aD0iMSIvPjwvc3ZnPg==')] transition-colors duration-300 dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDM5LjVoNDBNMzkuNSAwdjQwIiBzdHJva2U9InJnYmEoMjQ0LDI0NCwyNDAsMC4wMikiIHN0cm9rZS13aWR0aD0iMSIvPjwvc3ZnPg==')]"></div>
+        <svg class="absolute inset-0 h-full w-full opacity-30" xmlns="http://www.w3.org/2000/svg">
+          <path class="stroke-[#2563EB] transition-colors duration-300 dark:stroke-[#8AB4F8]" d="M -100 200 C 300 200, 300 400, 800 400" fill="none" stroke-dasharray="4 4" stroke-width="1">
+            <animate attributeName="stroke-dashoffset" dur="5s" from="100" repeatCount="indefinite" to="0"></animate>
+          </path>
+          <path class="stroke-[#2563EB] transition-colors duration-300 dark:stroke-[#8AB4F8]" d="M 1200 600 C 800 600, 800 200, 300 200" fill="none" opacity="0.5" stroke-dasharray="4 4" stroke-width="1">
+            <animate attributeName="stroke-dashoffset" dur="5s" from="0" repeatCount="indefinite" to="100"></animate>
+          </path>
+        </svg>
+        <div class="absolute left-1/4 top-1/4 h-1.5 w-1.5 animate-ping rounded-full bg-action-coral"></div>
+        <div class="absolute left-1/4 top-1/4 h-1.5 w-1.5 rounded-full bg-action-coral"></div>
+        <div class="absolute bottom-1/3 right-1/4 h-1.5 w-1.5 animate-ping rounded-full bg-action-coral" style="animation-delay: 1s;"></div>
+        <div class="absolute bottom-1/3 right-1/4 h-1.5 w-1.5 rounded-full bg-action-coral"></div>
+      </div>
+      <div class="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 text-center">
+        <div class="hero-badge mb-8 inline-flex items-center justify-center gap-2 rounded-sm border border-[#2563EB]/20 bg-[#2563EB]/5 px-3 py-1 transition-colors duration-300 dark:border-drafting-blue/20 dark:bg-drafting-blue/5">
+          <span class="h-2 w-2 rounded-full bg-action-coral"></span>
+          <span class="font-mono text-xs font-medium uppercase tracking-[0.2em] text-[#2563EB] transition-colors duration-300 dark:text-drafting-blue">n8n - GoHighLevel - AI Workflow Systems</span>
+        </div>
+        <h1 class="hero-title-text mb-6 max-w-5xl font-display text-4xl font-bold tracking-[-0.04em] text-[#16181A] transition-colors duration-300 dark:text-machine-off-white sm:text-6xl md:text-7xl lg:text-8xl">
+          AI Automation Systems for Service Businesses
+        </h1>
+        <div class="mb-8 h-1 w-24 bg-action-coral"></div>
+        <p class="hero-copy mb-10 max-w-[calc(100vw-32px)] font-body text-lg leading-relaxed text-[#5F676D] transition-colors duration-300 dark:text-muted-text md:max-w-2xl md:text-xl">
+          I build n8n, GoHighLevel, CRM, and AI-assisted workflows that help teams capture leads, follow up faster, reduce admin work, and keep operations organized.
+        </p>
+        <div class="flex flex-col gap-4 sm:flex-row">
+          <a class="flex items-center justify-center gap-2 rounded-sm bg-action-coral px-8 py-4 font-mono text-xs font-bold uppercase tracking-widest text-white transition-all hover:brightness-110 active:scale-95" href="#book">
+            Book Consultation
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </a>
+          <a class="flex items-center justify-center gap-2 rounded-sm border border-[#2563EB]/30 px-8 py-4 font-mono text-xs font-bold uppercase tracking-widest text-[#2563EB] transition-colors hover:bg-[#2563EB]/10 dark:border-drafting-blue/30 dark:text-drafting-blue dark:hover:bg-drafting-blue/10" href="#proof">
+            View Proof Folder
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="w-full border-b border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] py-stack-xl transition-colors duration-300 dark:border-border-subtle dark:bg-[#16181A]" id="process">
+      <div class="mx-auto max-w-container-max px-margin-page">
+        <div class="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div>
+            <span class="mb-3 block font-mono text-xs font-bold uppercase tracking-[0.2em] text-action-coral">How I Work</span>
+            <h2 class="font-display text-4xl font-bold tracking-tight text-[#16181A] transition-colors duration-300 dark:text-machine-off-white md:text-5xl">A clear build process for practical automation systems.</h2>
+          </div>
+          <p class="max-w-xl text-[#5F676D] transition-colors duration-300 dark:text-muted-text">Each build starts with the real workflow, then moves into structured mapping, careful connection, testing, and handoff.</p>
+        </div>
+        <div class="process-flow">
+          <article class="process-step" data-motion="audit">
+            <div class="process-icon step-container delay-1"><span class="material-symbols-outlined step-icon anim-search delay-1 text-2xl">search</span></div>
+            <span class="process-step-number">1</span>
+            <h3 class="font-display text-lg font-bold text-[#16181A] dark:text-machine-off-white">Process Audit</h3>
+            <p class="text-sm leading-relaxed text-[#5F676D] dark:text-muted-text">Review the current workflow, tools, bottlenecks, handoff points, and follow-up gaps.</p>
+          </article>
+          <article class="process-step" data-motion="map">
+            <div class="process-icon step-container delay-2"><span class="material-symbols-outlined step-icon anim-map delay-2 text-2xl">map</span></div>
+            <span class="process-step-number">2</span>
+            <h3 class="font-display text-lg font-bold text-[#16181A] dark:text-machine-off-white">System Map</h3>
+            <p class="text-sm leading-relaxed text-[#5F676D] dark:text-muted-text">Plan the logic before building so triggers, data, routing, and exceptions are clear.</p>
+          </article>
+          <article class="process-step" data-motion="connect">
+            <div class="process-icon step-container delay-3"><span class="material-symbols-outlined step-icon anim-gear delay-3 text-2xl">settings</span></div>
+            <span class="process-step-number">3</span>
+            <h3 class="font-display text-lg font-bold text-[#16181A] dark:text-machine-off-white">Build & Connect</h3>
+            <p class="text-sm leading-relaxed text-[#5F676D] dark:text-muted-text">Connect forms, CRM, databases, email, notifications, AI steps, and webhooks.</p>
+          </article>
+          <article class="process-step" data-motion="bug">
+            <div class="process-icon step-container delay-4"><span class="material-symbols-outlined step-icon anim-bug delay-4 text-2xl">bug_report</span></div>
+            <span class="process-step-number">4</span>
+            <h3 class="font-display text-lg font-bold text-[#16181A] dark:text-machine-off-white">Test & Fix</h3>
+            <p class="text-sm leading-relaxed text-[#5F676D] dark:text-muted-text">Test edge cases, failed runs, duplicate records, missing fields, and handoff issues.</p>
+          </article>
+          <article class="process-step" data-motion="rocket">
+            <div class="process-icon step-container delay-5"><span class="material-symbols-outlined step-icon anim-rocket delay-5 text-2xl">rocket_launch</span></div>
+            <span class="process-step-number">5</span>
+            <h3 class="font-display text-lg font-bold text-[#16181A] dark:text-machine-off-white">Launch & Handoff</h3>
+            <p class="text-sm leading-relaxed text-[#5F676D] dark:text-muted-text">Document the system, explain the workflow, and provide practical improvement notes.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="w-full border-b border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] py-stack-xl transition-colors duration-300 dark:border-border-subtle dark:bg-[#16181A]" id="proof">
+      <div class="mx-auto max-w-container-max px-margin-page">
+        <div class="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div>
+            <span class="mb-3 block font-mono text-xs font-bold uppercase tracking-[0.2em] text-action-coral">Proof Folder</span>
+            <h2 class="font-display text-4xl font-bold tracking-tight text-[#16181A] transition-colors duration-300 dark:text-machine-off-white md:text-5xl">Browse real workflow evidence.</h2>
+          </div>
+          <p class="max-w-xl text-[#5F676D] transition-colors duration-300 dark:text-muted-text">Screenshots and workflow previews are organized by system type so clients can inspect the work quickly.</p>
+        </div>
+
+        <div class="mb-6 flex gap-2 overflow-x-auto pb-2" role="tablist" aria-label="Proof folder tabs">
+          <button class="proof-tab whitespace-nowrap rounded-sm border border-action-coral bg-action-coral/10 px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-action-coral" data-tab="n8n" type="button">n8n Workflow Systems</button>
+          <button class="proof-tab whitespace-nowrap rounded-sm border border-[rgba(22,24,26,0.12)] px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-[#5F676D] dark:border-border-subtle dark:text-muted-text" data-tab="ghl" type="button">Funnel Systems</button>
+          <button class="proof-tab whitespace-nowrap rounded-sm border border-[rgba(22,24,26,0.12)] px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-[#5F676D] dark:border-border-subtle dark:text-muted-text" data-tab="crm" type="button">Lead Capture + CRM</button>
+          <button class="proof-tab whitespace-nowrap rounded-sm border border-[rgba(22,24,26,0.12)] px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-[#5F676D] dark:border-border-subtle dark:text-muted-text" data-tab="ai" type="button">AI Admin Workflows</button>
+        </div>
+
+        <div class="grid gap-8 border border-[rgba(22,24,26,0.12)] bg-white p-4 transition-colors duration-300 dark:border-border-subtle dark:bg-deep-blueprint/30 lg:grid-cols-12 lg:p-6">
+          <div class="lg:col-span-8">
+            <button class="proof-open aspect-[16/10] w-full overflow-hidden rounded-sm border border-[rgba(22,24,26,0.12)] bg-[#101214] dark:border-border-subtle" id="proof-main-open" type="button">
+              <img class="proof-image" id="proof-main-image" src="./assets/screenshots/dental/dental-new-patient-intake.png" alt="Dental Clinic Automation Suite proof screenshot" />
+            </button>
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-sm border border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] px-4 py-3 dark:border-border-subtle dark:bg-dark-panel">
+              <p class="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#5F676D] dark:text-muted-text" id="proof-image-count">Gallery ready</p>
+              <button class="rounded-sm border border-action-coral px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-widest text-action-coral transition-colors hover:bg-action-coral hover:text-white" id="proof-gallery-open" type="button">View Gallery</button>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-4 lg:col-span-4">
+            <div class="border border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] p-5 transition-colors duration-300 dark:border-border-subtle dark:bg-dark-panel">
+              <h3 class="mb-3 font-display text-2xl font-bold text-[#16181A] transition-colors duration-300 dark:text-machine-off-white" id="proof-title">Dental Clinic Automation Suite</h3>
+              <div class="space-y-4">
+                <div>
+                  <span class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#2563EB] dark:text-drafting-blue" id="proof-primary-label">Problem</span>
+                  <p class="mt-1 text-sm leading-relaxed text-[#5F676D] transition-colors duration-300 dark:text-machine-off-white/80" id="proof-problem"></p>
+                </div>
+                <div>
+                  <span class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#2563EB] dark:text-drafting-blue" id="proof-secondary-label">System Built</span>
+                  <p class="mt-1 text-sm leading-relaxed text-[#5F676D] transition-colors duration-300 dark:text-machine-off-white/80" id="proof-system"></p>
+                </div>
+                <div>
+                  <span class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#2563EB] dark:text-drafting-blue">What This Proves</span>
+                  <p class="mt-1 text-sm leading-relaxed text-[#5F676D] transition-colors duration-300 dark:text-machine-off-white/80" id="proof-proves"></p>
+                </div>
+              </div>
+            </div>
+            <div class="border border-[rgba(22,24,26,0.12)] bg-white p-5 transition-colors duration-300 dark:border-border-subtle dark:bg-dark-panel">
+              <span class="mb-3 block font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#2563EB] dark:text-drafting-blue">Tools Used</span>
+              <div class="flex flex-wrap gap-2" id="proof-tools"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="w-full border-b border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] py-stack-xl transition-colors duration-300 dark:border-border-subtle dark:bg-forged-iron" id="stack">
+      <div class="mx-auto max-w-container-max px-margin-page">
+        <div class="mb-16">
+          <h2 class="mb-4 font-display text-4xl font-bold tracking-tight text-[#16181A] transition-colors duration-300 dark:text-machine-off-white md:text-5xl">Connected tools. Cleaner workflows.</h2>
+          <p class="max-w-3xl font-body text-lg leading-relaxed text-[#5F676D] transition-colors duration-300 dark:text-muted-text">I connect the tools your business already uses into structured automation systems for lead capture, CRM updates, follow-up, reporting, and AI-assisted admin work.</p>
+        </div>
+
+        <div class="flex flex-col items-center gap-16 lg:flex-row">
+          <div class="orbit-wrap flex min-h-[600px] w-full items-center justify-center lg:w-1/2">
+            <div class="orbit-field relative h-[550px] w-[550px] max-w-full">
+              <div class="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
+                <div class="automation-core" aria-label="Automation Core">
+                  <div class="text-center">
+                    <span class="material-symbols-outlined automation-core-icon">precision_manufacturing</span>
+                    <span class="automation-core-label">Automation<br />Core</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="orbit-layer absolute inset-0">
+                <div class="orbit-ring h-[280px] w-[280px]"></div>
+                <div class="orbit-container absolute inset-0">
+                  <div class="tool-node" style="--angle: 270deg; --radius: 140px;"><div class="keep-upright"><div class="tool-logo-card"><img src="./assets/logos/n8n-color.svg" alt="n8n" /></div></div></div>
+                  <div class="tool-node" style="--angle: 30deg; --radius: 140px;"><div class="keep-upright"><div class="tool-logo-card"><img src="./assets/logos/Highlevel.png" alt="GoHighLevel" /></div></div></div>
+                  <div class="tool-node" style="--angle: 150deg; --radius: 140px;"><div class="keep-upright"><div class="tool-logo-card"><img src="./assets/logos/Make%20Symbol%20SVG.svg" alt="Make" /></div></div></div>
+                </div>
+              </div>
+
+              <div class="orbit-layer absolute inset-0">
+                <div class="orbit-ring h-[400px] w-[400px]"></div>
+                <div class="orbit-container reverse absolute inset-0">
+                  <div class="tool-node" style="--angle: 315deg; --radius: 200px;"><div class="keep-upright"><div class="tool-logo-card"><img src="./assets/logos/openai.svg" alt="OpenAI" /></div></div></div>
+                  <div class="tool-node" style="--angle: 45deg; --radius: 200px;"><div class="keep-upright"><div class="tool-logo-card"><img src="./assets/logos/claude-color.svg" alt="Claude" /></div></div></div>
+                  <div class="tool-node" style="--angle: 135deg; --radius: 200px;"><div class="keep-upright"><div class="tool-logo-card"><img src="./assets/logos/supabase-icon.svg" alt="Supabase" /></div></div></div>
+                  <div class="tool-node" style="--angle: 225deg; --radius: 200px;"><div class="keep-upright"><div class="tool-logo-card"><img src="./assets/logos/PostgreSQL%20Icon.png" alt="PostgreSQL" /></div></div></div>
+                </div>
+              </div>
+
+              <div class="orbit-layer absolute inset-0">
+                <div class="orbit-ring h-[520px] w-[520px]"></div>
+                <div class="orbit-container absolute inset-0" style="animation-duration: 170s;">
+                  <div class="tool-node" style="--angle: 270deg; --radius: 260px;"><div class="keep-upright" style="animation-duration: 170s;"><div class="tool-logo-card"><img src="./assets/logos/gmail.png" alt="Gmail" /></div></div></div>
+                  <div class="tool-node" style="--angle: 321deg; --radius: 260px;"><div class="keep-upright" style="animation-duration: 170s;"><div class="tool-logo-card"><img src="./assets/logos/google-sheets-icon.svg" alt="Google Sheets" /></div></div></div>
+                  <div class="tool-node" style="--angle: 13deg; --radius: 260px;"><div class="keep-upright" style="animation-duration: 170s;"><div class="tool-logo-card"><img src="./assets/logos/notion.svg" alt="Notion" /></div></div></div>
+                  <div class="tool-node" style="--angle: 64deg; --radius: 260px;"><div class="keep-upright" style="animation-duration: 170s;"><div class="tool-logo-card"><img src="./assets/logos/github.svg" alt="GitHub" /></div></div></div>
+                  <div class="tool-node" style="--angle: 116deg; --radius: 260px;"><div class="keep-upright" style="animation-duration: 170s;"><div class="tool-logo-card"><img src="./assets/logos/Zapier%20Symbol%20SVG.svg" alt="Zapier" /></div></div></div>
+                  <div class="tool-node" style="--angle: 167deg; --radius: 260px;"><div class="keep-upright" style="animation-duration: 170s;"><div class="tool-logo-card"><img src="./assets/logos/Telegram.png" alt="Telegram" /></div></div></div>
+                  <div class="tool-node" style="--angle: 219deg; --radius: 260px;"><div class="keep-upright" style="animation-duration: 170s;"><div class="tool-logo-card"><img src="./assets/logos/WhatsApp%20Icon.png" alt="WhatsApp" /></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-full space-y-6 lg:w-1/2">
+            <div class="border border-[rgba(22,24,26,0.12)] bg-white p-6 transition-colors hover:border-[#2563EB]/30 dark:border-border-subtle dark:bg-deep-blueprint/30 dark:hover:border-drafting-blue/30">
+              <h3 class="mb-2 flex items-center gap-2 font-mono text-sm font-bold uppercase tracking-widest text-[#16181A] transition-colors duration-300 dark:text-machine-off-white"><span class="material-symbols-outlined text-sm text-[#2563EB] dark:text-drafting-blue">account_tree</span>Automation</h3>
+              <p class="mb-4 text-sm text-[#5F676D] transition-colors duration-300 dark:text-muted-text">Workflow builders used to connect forms, CRMs, databases, emails, and follow-up actions.</p>
+              <div class="flex flex-wrap gap-2">
+                <span class="stack-logo flex items-center gap-2 rounded-sm border border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] px-3 py-2 text-xs font-bold dark:border-border-subtle dark:bg-dark-panel"><img class="h-5 w-5" src="./assets/logos/n8n-color.svg" alt="" />n8n</span>
+                <span class="stack-logo flex items-center gap-2 rounded-sm border border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] px-3 py-2 text-xs font-bold dark:border-border-subtle dark:bg-dark-panel"><img class="h-5 w-5" src="./assets/logos/Highlevel.png" alt="" />GoHighLevel</span>
+                <span class="stack-logo flex items-center gap-2 rounded-sm border border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] px-3 py-2 text-xs font-bold dark:border-border-subtle dark:bg-dark-panel"><img class="h-5 w-5" src="./assets/logos/Make%20Symbol%20SVG.svg" alt="" />Make</span>
+                <span class="stack-logo flex items-center gap-2 rounded-sm border border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] px-3 py-2 text-xs font-bold dark:border-border-subtle dark:bg-dark-panel"><img class="h-5 w-5" src="./assets/logos/Zapier%20Symbol%20SVG.svg" alt="" />Zapier</span>
+              </div>
+            </div>
+            <div class="border border-[rgba(22,24,26,0.12)] bg-white p-6 transition-colors hover:border-[#2563EB]/30 dark:border-border-subtle dark:bg-deep-blueprint/30 dark:hover:border-drafting-blue/30">
+              <h3 class="mb-2 flex items-center gap-2 font-mono text-sm font-bold uppercase tracking-widest text-[#16181A] transition-colors duration-300 dark:text-machine-off-white"><span class="material-symbols-outlined text-sm text-[#2563EB] dark:text-drafting-blue">psychology</span>AI / Data</h3>
+              <p class="mb-4 text-sm text-[#5F676D] transition-colors duration-300 dark:text-muted-text">Used for classification, draft replies, intake parsing, knowledge support, and structured workflow assistance.</p>
+              <div class="flex flex-wrap gap-2">
+                <span class="stack-logo flex items-center gap-2 rounded-sm border border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] px-3 py-2 text-xs font-bold dark:border-border-subtle dark:bg-dark-panel"><img class="h-5 w-5" src="./assets/logos/openai.svg" alt="" />OpenAI</span>
+                <span class="stack-logo flex items-center gap-2 rounded-sm border border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] px-3 py-2 text-xs font-bold dark:border-border-subtle dark:bg-dark-panel"><img class="h-5 w-5" src="./assets/logos/claude-color.svg" alt="" />Claude</span>
+                <span class="stack-logo flex items-center gap-2 rounded-sm border border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] px-3 py-2 text-xs font-bold dark:border-border-subtle dark:bg-dark-panel"><img class="h-5 w-5" src="./assets/logos/gemini-color.svg" alt="" />Gemini</span>
+                <span class="stack-logo flex items-center gap-2 rounded-sm border border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] px-3 py-2 text-xs font-bold dark:border-border-subtle dark:bg-dark-panel"><img class="h-5 w-5" src="./assets/logos/supabase-icon.svg" alt="" />Supabase</span>
+                <span class="stack-logo flex items-center gap-2 rounded-sm border border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] px-3 py-2 text-xs font-bold dark:border-border-subtle dark:bg-dark-panel"><img class="h-5 w-5" src="./assets/logos/PostgreSQL%20Icon.png" alt="" />PostgreSQL</span>
+              </div>
+            </div>
+            <div class="border border-[rgba(22,24,26,0.12)] bg-white p-6 transition-colors hover:border-[#2563EB]/30 dark:border-border-subtle dark:bg-deep-blueprint/30 dark:hover:border-drafting-blue/30">
+              <h3 class="mb-2 flex items-center gap-2 font-mono text-sm font-bold uppercase tracking-widest text-[#16181A] transition-colors duration-300 dark:text-machine-off-white"><span class="material-symbols-outlined text-sm text-[#2563EB] dark:text-drafting-blue">forum</span>Communication / Handoff</h3>
+              <p class="mb-4 text-sm text-[#5F676D] transition-colors duration-300 dark:text-muted-text">Used for alerts, reminders, confirmations, handoffs, and organized tracking.</p>
+              <div class="flex flex-wrap gap-2">
+                <span class="stack-logo flex items-center gap-2 rounded-sm border border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] px-3 py-2 text-xs font-bold dark:border-border-subtle dark:bg-dark-panel"><img class="h-5 w-5" src="./assets/logos/gmail.png" alt="" />Gmail</span>
+                <span class="stack-logo flex items-center gap-2 rounded-sm border border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] px-3 py-2 text-xs font-bold dark:border-border-subtle dark:bg-dark-panel"><img class="h-5 w-5" src="./assets/logos/google-sheets-icon.svg" alt="" />Google Sheets</span>
+                <span class="stack-logo flex items-center gap-2 rounded-sm border border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] px-3 py-2 text-xs font-bold dark:border-border-subtle dark:bg-dark-panel"><img class="h-5 w-5" src="./assets/logos/notion.svg" alt="" />Notion</span>
+                <span class="stack-logo flex items-center gap-2 rounded-sm border border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] px-3 py-2 text-xs font-bold dark:border-border-subtle dark:bg-dark-panel"><img class="h-5 w-5" src="./assets/logos/Telegram.png" alt="" />Telegram</span>
+                <span class="stack-logo flex items-center gap-2 rounded-sm border border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] px-3 py-2 text-xs font-bold dark:border-border-subtle dark:bg-dark-panel"><img class="h-5 w-5" src="./assets/logos/WhatsApp%20Icon.png" alt="" />WhatsApp</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="relative w-full overflow-hidden border-b border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] py-stack-xl transition-colors duration-300 dark:border-border-subtle dark:bg-[#16181A]" id="book">
+      <div class="pointer-events-none absolute inset-0 bg-[#2563EB]/5 blur-[100px] transition-colors duration-300 dark:bg-drafting-blue/5"></div>
+      <div class="relative z-10 mx-auto flex max-w-container-max flex-col items-center gap-16 px-margin-page lg:flex-row">
+        <div class="w-full space-y-8 lg:w-1/2">
+          <div class="inline-flex items-center gap-2 rounded-full border border-action-coral/30 bg-action-coral/10 px-4 py-1.5">
+            <span class="h-2 w-2 animate-pulse rounded-full bg-action-coral"></span>
+            <span class="font-mono text-[11px] uppercase tracking-widest text-action-coral">Book A Workflow Consultation</span>
+          </div>
+          <h2 class="font-display text-4xl font-bold leading-tight tracking-tight text-[#16181A] transition-colors duration-300 dark:text-machine-off-white md:text-5xl">Let's map the workflow you want to automate.</h2>
+          <p class="font-body text-lg leading-relaxed text-[#5F676D] transition-colors duration-300 dark:text-muted-text">If your business is losing time to manual follow-up, scattered records, or repetitive admin tasks, I can help map a cleaner automation system.</p>
+          <p class="font-mono text-[11px] uppercase tracking-wide text-[#2563EB] opacity-80 transition-colors duration-300 dark:text-drafting-blue">Free discovery call for automation fit, workflow mapping, and next-step recommendations.</p>
+        </div>
+        <div class="w-full lg:w-1/2">
+          <div class="overflow-hidden rounded-sm border border-[rgba(22,24,26,0.12)] bg-white shadow-[0_0_40px_rgba(22,24,26,0.05)] transition-colors duration-300 dark:border-border-subtle dark:bg-[#264653] dark:shadow-[0_0_40px_rgba(38,70,83,0.3)]">
+            <div class="flex items-center justify-between border-b border-[rgba(22,24,26,0.12)] bg-[#F5F3EF] p-4 transition-colors duration-300 dark:border-border-subtle dark:bg-dark-panel">
+              <div class="flex items-center gap-2">
+                <span class="h-3 w-3 rounded-full bg-red-500/80"></span>
+                <span class="h-3 w-3 rounded-full bg-yellow-500/80"></span>
+                <span class="h-3 w-3 rounded-full bg-green-500/80"></span>
+              </div>
+              <span class="font-mono text-[10px] uppercase tracking-widest text-[#5F676D] transition-colors duration-300 dark:text-muted-text">Schedule a discovery call</span>
+              <div class="w-16"></div>
+            </div>
+            <!-- Calendly inline widget begin -->
+            <div class="calendly-inline-widget" data-url="https://calendly.com/roberttapangan-va/30min?hide_event_type_details=1&background_color=1c2127&text_color=ffffff&primary_color=ff5722" style="min-width:320px;height:700px;"></div>
+            <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+            <!-- Calendly inline widget end -->
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="lightbox" id="proofLightbox" aria-hidden="true">
+    <div class="lightbox-panel" role="dialog" aria-modal="true" aria-label="Proof image viewer">
+      <button class="lightbox-close" type="button" data-lightbox-close aria-label="Close proof image">&times;</button>
+      <div class="lightbox-layout">
+        <div class="lightbox-media">
+          <div class="lightbox-image-frame">
+            <img id="lightboxImage" src="./assets/screenshots/dental/dental-new-patient-intake.png" alt="" />
+          </div>
+          <div class="lightbox-caption" id="lightboxCaption"></div>
+          <div class="lightbox-gallery" id="lightboxGallery" aria-label="Proof image gallery thumbnails"></div>
+        </div>
+        <aside class="lightbox-info" aria-label="Proof image description">
+          <span class="lightbox-info-label">Proof Details</span>
+          <h3 class="lightbox-info-title" id="lightboxTitle">Dental Clinic Automation Suite</h3>
+          <div class="lightbox-info-block">
+            <span class="lightbox-info-heading" id="lightboxPrimaryLabel">Function</span>
+            <p class="lightbox-info-text" id="lightboxPrimary"></p>
+          </div>
+          <div class="lightbox-info-block">
+            <span class="lightbox-info-heading" id="lightboxSecondaryLabel">Outcome</span>
+            <p class="lightbox-info-text" id="lightboxSecondary"></p>
+          </div>
+          <div class="lightbox-info-block">
+            <span class="lightbox-info-heading">What This Proves</span>
+            <p class="lightbox-info-text" id="lightboxProves"></p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-[#F5F3EF] px-margin-page py-10 transition-colors duration-300 dark:bg-[#16181A]">
+    <div class="mx-auto flex max-w-container-max flex-col items-center justify-between gap-6 border-t border-[rgba(22,24,26,0.12)] pt-8 dark:border-border-subtle md:flex-row">
+      <p class="text-center text-sm text-[#5F676D] dark:text-muted-text md:text-left">Built by Robert Tapangan. Automation systems for cleaner business operations.</p>
+      <div class="flex items-center gap-3">
+        <a class="social-logo grid h-10 w-10 place-items-center rounded-sm border border-[rgba(22,24,26,0.12)] bg-white p-2 transition-colors hover:border-action-coral dark:border-border-subtle dark:bg-dark-panel" href="https://github.com/roberttapanganva-automation" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <img src="./assets/logos/github.svg" alt="" />
+        </a>
+        <a class="social-logo grid h-10 w-10 place-items-center rounded-sm border border-[rgba(22,24,26,0.12)] bg-white p-2 transition-colors hover:border-action-coral dark:border-border-subtle dark:bg-dark-panel" href="https://www.upwork.com/freelancers/~017429a849b97624af?mp_source=share" target="_blank" rel="noopener noreferrer" aria-label="Upwork">
+          <img src="./assets/logos/upwork.png" alt="" />
+        </a>
+        <a class="social-logo grid h-10 w-10 place-items-center rounded-sm border border-[rgba(22,24,26,0.12)] bg-white p-2 transition-colors hover:border-action-coral dark:border-border-subtle dark:bg-dark-panel" href="https://www.linkedin.com/in/robert-tapangan-automation-specialist/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+          <img src="./assets/logos/linkedin.png" alt="" />
+        </a>
+        <a class="social-logo grid h-10 w-10 place-items-center rounded-sm border border-[rgba(22,24,26,0.12)] bg-white p-2 transition-colors hover:border-action-coral dark:border-border-subtle dark:bg-dark-panel" href="https://www.onlinejobs.ph/jobseekers/info/4877103" target="_blank" rel="noopener noreferrer" aria-label="OnlineJobs.ph">
+          <img src="./assets/logos/onlinejobs.png" alt="" />
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const root = document.documentElement;
+    const themeToggle = document.getElementById("theme-toggle");
+
+    if (localStorage.theme === "light") {
+      root.classList.remove("dark");
+    } else {
+      root.classList.add("dark");
+    }
+
+    themeToggle.addEventListener("click", () => {
+      root.classList.toggle("dark");
+      localStorage.theme = root.classList.contains("dark") ? "dark" : "light";
+    });
+
+    const proofData = {
+      n8n: {
+        title: "Dental Clinic Automation Suite",
+        primaryLabel: "Function",
+        secondaryLabel: "Outcome",
+        primary: "Patient intake, AI-assisted parsing, booking confirmation, appointment reminders, staff notifications, and Supabase/PostgreSQL record updates.",
+        secondary: "Shows a complete front-desk automation flow from inquiry capture to appointment follow-up and reminder status tracking.",
+        whatThisProves: "Multi-step n8n workflow logic, webhook handling, data normalization, AI-assisted parsing, conditional routing, Gmail notifications, and database-backed operational handoff.",
+        tools: ["n8n", "Supabase", "Gmail", "OpenAI"],
+        images: [
+          { src: "./assets/screenshots/dental/dental-new-patient-intake.png", alt: "Dental new patient intake workflow with AI parsing and staff routing" },
+          { src: "./assets/screenshots/dental/dental-booking-confirmation.png", alt: "Dental appointment booking confirmation workflow" },
+          { src: "./assets/screenshots/dental/dental-reminder-no-show-prevention.png", alt: "Dental appointment reminder and no-show prevention workflow" },
+          { src: "./assets/screenshots/dental/dental-reminder-proof.png", alt: "Gmail reminder proof for a dental appointment reminder" }
+        ]
+      },
+      ghl: {
+        title: "GoHighLevel B2B Client Delivery OS",
+        primaryLabel: "Function",
+        secondaryLabel: "Outcome",
+        primary: "Sales intake funnel, application form, booking calendar, CRM pipelines, onboarding, portal/course/community access, certificates, review requests, video testimonial collection, dashboards, and n8n webhook support.",
+        secondary: "Shows how GoHighLevel can be structured as a full client delivery operating system, not just a funnel or simple CRM.",
+        whatThisProves: "Funnel building, CRM structure, pipeline planning, client onboarding, delivery tracking, proof collection, dashboard visibility, and hybrid GHL + n8n automation.",
+        tools: ["GoHighLevel", "n8n"],
+        images: [
+          { src: "./assets/GHL%20Proof/%231%20LANDING%20PAGE.svg", alt: "GoHighLevel landing page funnel screenshot" },
+          { src: "./assets/GHL%20Proof/%232%20APPLICATION%20PAGE.svg", alt: "GoHighLevel application page screenshot" },
+          { src: "./assets/GHL%20Proof/%233%20CALENDAR%20PAGE.svg", alt: "GoHighLevel calendar booking screenshot" },
+          { src: "./assets/GHL%20Proof/%234%20THANK%20YOU%20PAGE.svg", alt: "GoHighLevel thank-you page screenshot" },
+          { src: "./assets/GHL%20Proof/CONTACTS.png", alt: "GoHighLevel contacts and smart lists proof" },
+          { src: "./assets/GHL%20Proof/OPPORTUNITY.png", alt: "GoHighLevel opportunity pipeline proof" },
+          { src: "./assets/GHL%20Proof/DASHBOARD%20PROOF.png", alt: "Growth Partner Academy delivery and proof dashboard" },
+          { src: "./assets/GHL%20Proof/MILESTONE.png", alt: "Growth Partner Academy implementation milestones table" },
+          { src: "./assets/GHL%20Proof/Course.png", alt: "GoHighLevel course portal proof" },
+          { src: "./assets/GHL%20Proof/Community.png", alt: "GoHighLevel community access proof" },
+          { src: "./assets/GHL%20Proof/CERTIFICATE.png", alt: "Growth Partner Academy certificate proof" },
+          { src: "./assets/GHL%20Proof/GHL%20AUTOMATION.png", alt: "GoHighLevel automation workflow proof" },
+          { src: "./assets/GHL%20Proof/N8N%20%2B%20GHL%20AUTOMATION.png", alt: "n8n and GoHighLevel webhook automation proof" },
+          { src: "./assets/GHL%20Proof/Video%20Testimonial%20SC.png", alt: "Video testimonial request flow proof" }
+        ]
+      },
+      crm: {
+        title: "Lead Capture & Follow-Up Automation",
+        primaryLabel: "Function",
+        secondaryLabel: "Outcome",
+        primary: "Capture leads, validate data, classify hot/warm/cold, notify the owner, create Notion tasks, log records in Google Sheets, and send follow-up emails.",
+        secondary: "Shows lead routing, CRM tracking, task creation, reporting, and follow-up without manual handoff gaps.",
+        whatThisProves: "Lead handling logic, workflow branching, Google Sheets tracking, Notion task creation, Telegram/Gmail notifications, and scheduled reporting.",
+        tools: ["n8n", "Google Sheets", "Notion", "Gmail", "Telegram"],
+        images: [
+          { src: "./assets/screenshots/lead-capture/lead-capture-workflow-structure.png", alt: "Lead capture and follow-up workflow structure" },
+          { src: "./assets/screenshots/lead-capture/lead-capture-workflow-structure-warm-success.png", alt: "Warm lead workflow success path" },
+          { src: "./assets/screenshots/lead-capture/lead-capture-workflow-structure-cold-success.png", alt: "Cold lead workflow success path" },
+          { src: "./assets/screenshots/lead-capture/notion-auto-task-capture.png", alt: "Lead task capture in Notion" },
+          { src: "./assets/screenshots/lead-capture/auto-capture-lead-dashboard.png", alt: "Google Sheets lead dashboard" },
+          { src: "./assets/screenshots/lead-capture/auto-capture-lead-warm.png", alt: "Warm lead tracker in Google Sheets" },
+          { src: "./assets/screenshots/lead-capture/auto-summary-email-sent-to-cx.png", alt: "Automated lead summary email proof" },
+          { src: "./assets/screenshots/lead-capture/daily-auto-summary-report-workflow-structure.png", alt: "Daily lead summary reporting workflow" },
+          { src: "./assets/screenshots/lead-capture/daily-auto-summary-execution-success.png", alt: "Daily summary execution success proof" },
+          { src: "./assets/screenshots/lead-capture/auto-email-report-summary.png", alt: "Daily email report summary proof" }
+        ]
+      },
+      ai: {
+        title: "AI Email Triage + Knowledge Base Support",
+        primaryLabel: "Function",
+        secondaryLabel: "Outcome",
+        primary: "Classify incoming emails, create draft replies, log triage data, notify the team, create review tasks, and answer internal questions from grounded document retrieval.",
+        secondary: "Shows practical AI admin workflows with human review, escalation paths, document ingestion, vector search, and operational logging.",
+        whatThisProves: "AI-assisted classification, draft response creation, Notion task routing, Telegram alerting, Google Sheets logging, document ingestion, grounded prompting, and vector-search knowledge support.",
+        tools: ["n8n", "OpenAI", "Gmail", "Notion", "Telegram", "Google Sheets", "Supabase"],
+        images: [
+          { src: "./assets/screenshots/ai-email/ai-email-execution-success.png", alt: "AI email triage workflow execution success" },
+          { src: "./assets/screenshots/ai-email/ai-email-notion-tasks.png", alt: "AI email triage tasks in Notion" },
+          { src: "./assets/screenshots/ai-email/ai-email-telegram-alerts.png", alt: "AI email triage Telegram alert proof" },
+          { src: "./assets/screenshots/ai-email/ai-email-triage-log.png", alt: "AI email triage log in Google Sheets" },
+          { src: "./assets/screenshots/ai-email/logs.png", alt: "AI email triage workflow log proof" },
+          { src: "./assets/screenshots/knowledge-base/employee-handbook-knowledge-base-faq-chatbot-complex-question-example.png", alt: "Knowledge base chatbot answer from employee handbook context" },
+          { src: "./assets/screenshots/knowledge-base/employee-handbook-knowledge-base-faq-chatbot-workflow.png", alt: "Employee handbook knowledge base FAQ chatbot workflow" },
+          { src: "./assets/screenshots/knowledge-base/knowledge-base-document-ingestion.png", alt: "Knowledge base document ingestion workflow" }
+        ]
+      }
+    };
+
+    const logoMap = {
+      n8n: "./assets/logos/n8n-color.svg",
+      Supabase: "./assets/logos/supabase-icon.svg",
+      Gmail: "./assets/logos/gmail.png",
+      OpenAI: "./assets/logos/openai.svg",
+      GoHighLevel: "./assets/logos/Highlevel.png",
+      Zapier: "./assets/logos/Zapier%20Symbol%20SVG.svg",
+      "Google Sheets": "./assets/logos/google-sheets-icon.svg",
+      Notion: "./assets/logos/notion.svg",
+      Telegram: "./assets/logos/Telegram.png",
+      Claude: "./assets/logos/claude-color.svg"
+    };
+
+    const proofMainImage = document.getElementById("proof-main-image");
+    const proofMainOpen = document.getElementById("proof-main-open");
+    const proofTitle = document.getElementById("proof-title");
+    const proofPrimaryLabel = document.getElementById("proof-primary-label");
+    const proofSecondaryLabel = document.getElementById("proof-secondary-label");
+    const proofProblem = document.getElementById("proof-problem");
+    const proofSystem = document.getElementById("proof-system");
+    const proofProves = document.getElementById("proof-proves");
+    const proofTools = document.getElementById("proof-tools");
+    const proofImageCount = document.getElementById("proof-image-count");
+    const proofGalleryOpen = document.getElementById("proof-gallery-open");
+    const tabs = Array.from(document.querySelectorAll(".proof-tab"));
+    const lightbox = document.getElementById("proofLightbox");
+    const lightboxImage = document.getElementById("lightboxImage");
+    const lightboxCaption = document.getElementById("lightboxCaption");
+    const lightboxGallery = document.getElementById("lightboxGallery");
+    const lightboxTitle = document.getElementById("lightboxTitle");
+    const lightboxPrimaryLabel = document.getElementById("lightboxPrimaryLabel");
+    const lightboxSecondaryLabel = document.getElementById("lightboxSecondaryLabel");
+    const lightboxPrimary = document.getElementById("lightboxPrimary");
+    const lightboxSecondary = document.getElementById("lightboxSecondary");
+    const lightboxProves = document.getElementById("lightboxProves");
+    let currentProofData = proofData.n8n;
+    let currentProofImages = proofData.n8n.images;
+    let currentProofImage = proofData.n8n.images[0];
+    let currentProofIndex = 0;
+
+    function openLightbox(image, index = currentProofIndex) {
+      if (!image) return;
+      currentProofImage = image;
+      currentProofIndex = index;
+      lightboxImage.src = image.src;
+      lightboxImage.alt = image.alt;
+      lightboxCaption.textContent = image.alt;
+      lightboxTitle.textContent = currentProofData.title;
+      lightboxPrimaryLabel.textContent = currentProofData.primaryLabel;
+      lightboxSecondaryLabel.textContent = currentProofData.secondaryLabel;
+      lightboxPrimary.textContent = currentProofData.primary;
+      lightboxSecondary.textContent = currentProofData.secondary;
+      lightboxProves.textContent = currentProofData.whatThisProves;
+      renderLightboxGallery();
+      lightbox.classList.add("is-open");
+      lightbox.setAttribute("aria-hidden", "false");
+    }
+
+    function renderLightboxGallery() {
+      lightboxGallery.innerHTML = "";
+      currentProofImages.forEach((image, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = index === currentProofIndex ? "is-active" : "";
+        button.innerHTML = `<img src="${image.src}" alt="${image.alt}" />`;
+        button.addEventListener("click", () => openLightbox(image, index));
+        lightboxGallery.appendChild(button);
+      });
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove("is-open");
+      lightbox.setAttribute("aria-hidden", "true");
+    }
+
+    function renderProof(tabName) {
+      const data = proofData[tabName];
+      if (!data) return;
+
+      proofTitle.textContent = data.title;
+      proofPrimaryLabel.textContent = data.primaryLabel;
+      proofSecondaryLabel.textContent = data.secondaryLabel;
+      proofProblem.textContent = data.primary;
+      proofSystem.textContent = data.secondary;
+      proofProves.textContent = data.whatThisProves;
+      proofMainImage.src = data.images[0].src;
+      proofMainImage.alt = data.images[0].alt;
+      currentProofData = data;
+      currentProofImages = data.images;
+      currentProofImage = data.images[0];
+      currentProofIndex = 0;
+      proofImageCount.textContent = `${data.images.length} proof images available`;
+
+      proofTools.innerHTML = "";
+      data.tools.filter((tool) => logoMap[tool]).forEach((tool) => {
+        const pill = document.createElement("span");
+        pill.className = "flex items-center gap-2 rounded-full border border-[#2563EB]/30 bg-[#F5F3EF] px-3 py-1 font-mono text-[10px] font-bold text-[#2563EB] transition-colors duration-300 dark:border-drafting-blue/30 dark:bg-soft-surface dark:text-drafting-blue";
+        pill.innerHTML = `<img class="h-4 w-4 object-contain" src="${logoMap[tool]}" alt="" />${tool}`;
+        proofTools.appendChild(pill);
+      });
+
+
+
+      tabs.forEach((tab) => {
+        const isActive = tab.dataset.tab === tabName;
+        tab.classList.toggle("border-action-coral", isActive);
+        tab.classList.toggle("bg-action-coral/10", isActive);
+        tab.classList.toggle("text-action-coral", isActive);
+        tab.classList.toggle("border-[rgba(22,24,26,0.12)]", !isActive);
+        tab.classList.toggle("text-[#5F676D]", !isActive);
+        tab.classList.toggle("dark:text-muted-text", !isActive);
+      });
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => renderProof(tab.dataset.tab));
+    });
+
+    proofMainOpen.addEventListener("click", () => openLightbox(currentProofImage, currentProofIndex));
+    proofGalleryOpen.addEventListener("click", () => openLightbox(currentProofImage, currentProofIndex));
+    document.querySelectorAll("[data-lightbox-close]").forEach((button) => {
+      button.addEventListener("click", closeLightbox);
+    });
+    lightbox.addEventListener("click", (event) => {
+      if (event.target === lightbox) closeLightbox();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && lightbox.classList.contains("is-open")) {
+        closeLightbox();
+      }
+    });
+
+    renderProof("n8n");
+  </script>
+</body>
+</html>
